@@ -31,6 +31,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public String login(String username, String password) {
+        System.err.println("hiiiiii");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
@@ -38,15 +39,15 @@ public class UserServiceImp implements UserService {
         } catch (BadCredentialsException e) {
             throw new NullPointerException("//TODO -> login of userService");
         }
-        final UserDetails userDetails = detailsService.loadUserByUsername(String.valueOf(username));
-//        final String token = tokenUtil.generateToken(userDetails);
-        return null;
+        UserDetails userDetails = detailsService.loadUserByUsername(String.valueOf(username));
+        return TokenGenerator.getInstance().getToken(userDetails);
+
     }
 
     @Override
     public long signUp(UserDTO userDTO) throws DuplicateMemberException {
         Optional<User> userOptional = userRepository.findByUsername(userDTO.getUsername());
-        if(userOptional.isPresent())
+        if (userOptional.isPresent())
             throw new DuplicateMemberException("duplicated user //TODO");
         User user = new User();
         user.setEmail(userDTO.getEmail());
@@ -54,8 +55,8 @@ public class UserServiceImp implements UserService {
         user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
         user.setName(userDTO.getName());
-        User savedUser =  userRepository.save(user);
-        logger.info(new StringBuilder("A new User with username '"+savedUser.getUsername()+"' and Id '"+savedUser.getId()+"' was registered!"));
+        User savedUser = userRepository.save(user);
+        logger.info(new StringBuilder("A new User with username '" + savedUser.getUsername() + "' and Id '" + savedUser.getId() + "' was registered!"));
         return savedUser.getId();
     }
 

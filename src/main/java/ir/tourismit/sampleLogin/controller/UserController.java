@@ -20,18 +20,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    private String login(@RequestBody String username, String password){
-        return "login kard masalan :)";
+    private String login(@RequestParam("username") String username,@RequestParam("password") String password){
+        System.out.println("inja : "+ username);
+        System.out.println("onja : "+ password);
+        String token = userService.login(username, password);
+        return token;
     }
 
 
     @GetMapping("/test/{value}")
     @Cacheable({"topic"})
-    public int test(@PathVariable int value){
-        int result =temp(value);
+    public int testCache(@PathVariable int value){
+        int result =logic(value);
         return result;
     }
-    public int temp(int val){
+    public int logic(int val){
         System.out.println("here!");
         return val*3;
     }
