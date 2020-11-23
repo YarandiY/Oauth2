@@ -28,7 +28,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         // We don't need CSRF
                 http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/users/signup", "/users/login")
+                .antMatchers( "/users/signup", "/users/login", "/users/test/*")
                         .permitAll()
                 .anyRequest().authenticated()
                 .and()
