@@ -1,5 +1,6 @@
-package ir.tourismit.sampleLogin.service;
+package ir.tourismit.sampleLogin.security;
 
+import ir.tourismit.sampleLogin.exception.NotFoundException;
 import ir.tourismit.sampleLogin.model.User;
 import ir.tourismit.sampleLogin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() ->new NullPointerException("fgds"));
-        if (user == null)
-            throw new UsernameNotFoundException(username);
-        return user;
+    public UserDetails loadUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new NotFoundException("User not found [email: " + username + "]")
+                );
     }
+
+    @Transactional(readOnly = true)
+    public UserDetails loadUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("User not found [id: " + id + "]")
+        );
+    }
+
 }

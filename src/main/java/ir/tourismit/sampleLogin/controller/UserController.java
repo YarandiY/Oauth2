@@ -1,42 +1,25 @@
 package ir.tourismit.sampleLogin.controller;
 
-import ir.tourismit.sampleLogin.dto.UserDTO;
+import ir.tourismit.sampleLogin.dto.UserSummary;
 import ir.tourismit.sampleLogin.service.UserServiceImp;
-import javassist.bytecode.DuplicateMemberException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
-
     @Autowired
-    UserServiceImp userService;
+    private UserServiceImp userService;
 
-    @PostMapping("/signup")
-    private long signUp(@RequestBody UserDTO userDTO) throws DuplicateMemberException {
-        return userService.signUp(userDTO);
-    }
-
-    @PostMapping("/login")
-    private String login(@RequestParam("username") String username,@RequestParam("password") String password){
-        System.out.println("inja : "+ username);
-        System.out.println("onja : "+ password);
-        String token = userService.login(username, password);
-        return token;
+    @GetMapping("getUser/{id}")
+    public UserSummary getUserById(@PathVariable("id") Long id) {
+        return userService.getUserById(id);
     }
 
 
-    @GetMapping("/test/{value}")
-    @Cacheable({"topic"})
-    public int testCache(@PathVariable int value){
-        int result =logic(value);
-        return result;
-    }
-    public int logic(int val){
-        System.out.println("here!");
-        return val*3;
-    }
 
 }

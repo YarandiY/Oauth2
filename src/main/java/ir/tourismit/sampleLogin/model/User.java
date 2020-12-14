@@ -1,21 +1,21 @@
 package ir.tourismit.sampleLogin.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @Entity
-//@Table(name = "USER_", uniqueConstraints = { @UniqueConstraint(columnNames = { "USER_USERNAME" }) })
 @Table(name="USERS")
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails,  Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -24,42 +24,43 @@ public class User implements UserDetails, Serializable {
     private String username;
     @Column(name = "PASSWORD")
     private String password;
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL",unique = true)
     private String email;
     @Column(name = "MOBILE")
     private String mobile;
     @Column(name = "NAME")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "USERS_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID"))
-    @OrderBy
-    @JsonIgnore
-    private Collection<Authority> authorities;
 
-    //TODO
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "USERS_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID"))
+//    @OrderBy
+//    @JsonIgnore
+//    private Collection<Authority> authorities;
+
+//    //TODO
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
